@@ -9,6 +9,7 @@
 - **通訊平台**: LINE Messaging API
 - **部署方式**: Docker 容器化
 - **伺服器**: Gunicorn WSGI HTTP Server
+- **環境變數管理**: python-dotenv
 
 ## 主要功能
 
@@ -24,6 +25,7 @@
 2. **穩健錯誤處理**: 實現請求超時處理和異常捕捉，確保系統穩定性
 3. **容器化部署**: 使用 Docker 封裝應用程式，便於跨平台部署和擴展
 4. **簡潔高效的代碼**: 遵循 Python 最佳實踐，程式碼結構清晰，便於維護
+5. **安全性考量**: 透過環境變數管理敏感資訊，避免敏感資訊外洩
 
 ## 快速啟動
 
@@ -46,10 +48,16 @@
    pip install -r requirements.txt
    ```
 
-3. 更新 `line-bot.py` 中的 API 金鑰:
-   - LINE Bot API 金鑰
-   - LINE Bot Channel Secret
-   - OpenAI API 金鑰
+3. 設定環境變數:
+   ```
+   cp .env.example .env
+   ```
+   然後編輯 `.env` 檔案，填入您的 API 金鑰和密鑰:
+   ```
+   LINE_CHANNEL_ACCESS_TOKEN=your_line_channel_access_token
+   LINE_CHANNEL_SECRET=your_line_channel_secret
+   OPENAI_API_KEY=your_openai_api_key
+   ```
 
 4. 啟動應用:
    ```
@@ -58,16 +66,25 @@
 
 ### 使用 Docker 運行
 
-```
-docker build -t line-bot-gpt .
-docker run -p 5000:5000 line-bot-gpt
-```
+1. 設定環境變數 (同上方步驟 3)
+
+2. 構建並運行 Docker 容器:
+   ```
+   docker build -t line-bot-gpt .
+   docker run --env-file .env -p 5000:5000 line-bot-gpt
+   ```
 
 ## 系統架構
 
 ```
 用戶 (LINE App) <--> LINE Platform <--> Flask Web 服務 <--> OpenAI GPT API
 ```
+
+## 安全性注意事項
+
+- **敏感資訊處理**: 所有 API 金鑰和密鑰皆透過環境變數管理，避免硬編碼在程式碼中
+- **環境變數檔案**: `.env` 檔案已被加入 `.gitignore` 中，不會被上傳到版本控制系統
+- **範本提供**: 專案提供 `.env.example` 作為範本，說明需要設置的環境變數
 
 ## 未來改進方向
 
